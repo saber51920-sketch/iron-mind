@@ -62,7 +62,7 @@ function ProgramDetail({t,lang}) {
 
     const picks=keys.length?exercises.filter(e=>keys.includes(e.group)&&!usedExerciseIds.has(e.id)).slice(0,6):[];
 picks.forEach(e=>usedExerciseIds.add(e.id));
-        return <div className="schedule-row" key={`${p.id}-${i}`}>
+        :[];const picks=keys.length?exercises.filter(e=>keys.includes(e.group)&&!usedExerciseIds.has(e.id)).slice(0,6):[];picks.forEach(e=>usedExerciseIds.add(e.id));return <div className="schedule-row" key={`${p.id}-${i}`}>
           <span className="schedule-day">{String(i+1).padStart(2,'0')}</span>
           <div>
             <h3>{lang==='ar'?({
