@@ -1,7 +1,7 @@
 import React,{useEffect,useMemo,useState}from'react';import{Routes,Route,Link,NavLink,useParams,useNavigate}from'react-router-dom';import{Dumbbell,Brain,Apple,BookOpen,Calculator,Menu,X,Globe,ArrowUpRight,Search,ChevronRight,Activity,HeartPulse,Utensils,Info,Send,ArrowLeft,Target}from'lucide-react';import{groups,exercises}from'./data/exercises';import{foods,meals,nutritionTopics}from'./data/nutrition';import{programs}from'./data/programs';import{translations}from'./data/i18n';
 const cx=(...x)=>x.filter(Boolean).join(' ');
 function App(){const[lang,setLang]=useState('en'),[mobile,setMobile]=useState(false);const t=translations[lang],rtl=lang==='ar';useEffect(()=>{document.documentElement.lang=lang;document.documentElement.dir=rtl?'rtl':'ltr';},[lang,rtl]);const nav=[['/',t.home],['/coach',t.coach],['/workouts',t.workouts],['/programs',t.programs],['/nutrition',t.nutrition],['/foods',t.foods],['/meals',t.meals],['/tools',t.tools],['/about',t.about]];return <div dir={rtl?'rtl':'ltr'} className="app"><header className="topbar"><Link to="/" className="brand"><span className="brand-mark"><Dumbbell size={22}/></span><span>IRON MIND<small>KNOWLEDGE FOR EVERYONE</small></span></Link><nav className={cx('nav',mobile&&'nav-open')}>{nav.map(([p,n])=><NavLink onClick={()=>setMobile(false)} className={({isActive})=>isActive?'active':''} key={p} to={p}>{n}</NavLink>)}</nav><div className="head-actions"><button className="lang-btn" onClick={()=>setLang(lang==='en'?'ar':'en')}><Globe size={16}/>{lang==='en'?'العربية':'English'}</button><button className="mobile-toggle" onClick={()=>setMobile(!mobile)}>{mobile?<X/>:<Menu/>}</button></div></header><main><Routes><Route path="/" element={<Home t={t} lang={lang}/>}/><Route path="/workouts" element={<Workouts t={t} lang={lang}/>}/><Route path="/workouts/:id" element={<ExerciseDetail t={t} lang={lang}/>}/><Route path="/programs" element={<Programs t={t} lang={lang}/>}/><Route path="/programs/:id" element={<ProgramDetail t={t} lang={lang}/>}/><Route path="/nutrition" element={<Nutrition t={t} lang={lang}/>}/><Route path="/foods" element={<FoodDatabase t={t} lang={lang}/>}/><Route path="/meals" element={<Meals t={t} lang={lang}/>}/><Route path="/coach" element={<Coach t={t}/>}/><Route path="/tools" element={<Tools t={t}/>}/><Route path="/about" element={<About t={t} lang={lang}/>}/><Route path="*" element={<NotFound/>}/></Routes></main><footer><div className="footer-brand">IRON MIND</div><p>{t.missionText}</p><div className="footer-bottom"><span>© {new Date().getFullYear()} IRON MIND · By Ahmed Eissa</span><a href="https://www.tiktok.com/@ironmind289" target="_blank" rel="noreferrer">TikTok · @ironmind289 <ArrowUpRight size={13}/></a></div></footer></div>}
-function PageHead({eyebrow,title,desc}){return <div className="page-head"><span className="eyebrow">{eyebrow}</span><h1>{title}</h1>{desc&&<p>{desc}</p>}</div>}
+function PageHead({:[];const picks=keys.length?exercises.filter(e=>keys.includes(e.group)&&!usedExerciseIds.has(e.id)).slice(0,6):[];picks.forEach(e=>usedExerciseIds.add(e.id));return <div className="schedule-row",title,desc}){return <div className="page-head"><span className="eyebrow">{eyebrow}</span><h1>{title}</h1>{desc&&<p>{desc}</p>}</div>}
 function Home({t,lang}){return <><section className="hero"><div className="hero-copy"><span className="eyebrow"><span className="pulse"/> {t.heroTag}</span><h1>{t.heroTitle.split('\\n').map((s,i)=><React.Fragment key={i}>{i>0&&<br/>}{s}</React.Fragment>)}</h1><p>{t.heroText}</p><div className="hero-actions"><Link className="btn primary" to="/workouts">{t.exploreWorkouts}<ArrowUpRight size={17}/></Link><Link className="btn secondary" to="/nutrition">{t.exploreNutrition}</Link></div><div className="hero-proof"><span><b>35+</b> movements</span><i/><span><b>8</b> training splits</span><i/><span><b>02</b> languages</span></div></div><div className="hero-art"><div className="art-glow"/><div className="art-frame"><div className="art-grid"/><div className="art-label"><Activity size={15}/> TRAIN WITH INTENTION</div><div className="art-figure"><Dumbbell size={110} strokeWidth={1.1}/></div><div className="art-stat"><span>01 / MINDSET</span><b>DISCIPLINE<br/>OVER NOISE.</b></div></div><div className="floating-tag"><Target size={16}/> Evidence-led</div></div></section><section className="mission-strip"><div className="mission-icon"><Brain/></div><div><span className="eyebrow">OUR PURPOSE</span><h2>{t.mission}</h2><p>{t.missionText}</p></div><span className="mission-line"/></section><section className="section"><div className="section-top"><div><span className="eyebrow">ONE PLATFORM · MANY PATHS</span><h2>{t.featured}</h2></div><span className="muted">01 — 04</span></div><div className="feature-grid"><Feature to="/workouts" icon={<Dumbbell/>} no="01" title={t.library} desc={t.libraryText}/><Feature to="/nutrition" icon={<BookOpen/>} no="02" title={t.nutrition} desc={t.nutritionText}/><Feature to="/programs" icon={<Activity/>} no="03" title={t.programs} desc={t.programsText}/><Feature to="/foods" icon={<Apple/>} no="04" title={t.foods} desc={t.foodText}/></div></section><section className="quote-section"><span className="eyebrow">THE IRON MIND PROMISE</span><h2>“Strong bodies are built with<br/><em>informed decisions.</em>”</h2><p>{t.latestText}</p><Link to="/about" className="text-link">{t.about} <ArrowUpRight size={16}/></Link></section></>}
 function Feature({to,icon,no,title,desc}){return <Link to={to} className="feature-card"><div className="feature-top"><span className="feature-icon">{icon}</span><span>{no}</span></div><h3>{title}</h3><p>{desc}</p><span className="feature-arrow"><ArrowUpRight size={18}/></span></Link>}
 function Workouts({t,lang}){const[q,setQ]=useState(''),[group,setGroup]=useState('all'),[part,setPart]=useState('all'),[level,setLevel]=useState('all'),[equip,setEquip]=useState('all');const selected=groups.find(g=>g.id===group);const list=useMemo(()=>exercises.filter(e=>(group==='all'||e.group.toLowerCase()===selected?.en.toLowerCase()||e.group==='Additional'&&group==='additional')&&(part==='all'||e.part===part)&&(level==='all'||e.level===level)&&(equip==='all'||e.equipment.toLowerCase().includes(equip))&&(e.name+' '+e.nameAr+' '+e.part+' '+e.equipment).toLowerCase().includes(q.toLowerCase())),[q,group,part,level,equip]);return <div className="container"><PageHead eyebrow="MOVE WITH PURPOSE" title={t.library} desc={lang==='ar'?'مرجع متجدد للتمارين، منظم حسب المجموعة العضلية والمعدات المستخدمة.':'A growing reference of exercises, organized by muscle group and training equipment.'}/><div className="filter-panel"><div className="searchbox"><Search size={17}/><input value={q} onChange={e=>setQ(e.target.value)} placeholder={`${t.search} exercises...`}/></div><select value={group} onChange={e=>{setGroup(e.target.value);setPart('all')}}><option value="all">{t.allMuscles}</option>{groups.map(g=><option value={g.id} key={g.id}>{lang==='ar'?g.ar:g.en}</option>)}</select><select value={part} onChange={e=>setPart(e.target.value)}><option value="all">{t.allAreas}</option>{(selected?.parts||groups.flatMap(g=>g.parts)).map(p=><option key={p[0]} value={p[0]}>{lang==='ar'?p[2]:p[1]}</option>)}</select><select value={level} onChange={e=>setLevel(e.target.value)}><option value="all">{t.allLevels}</option>{['Beginner','Intermediate','Advanced'].map(x=><option>{x}</option>)}</select></div><div className="result-line"><span>{list.length} {t.movements}</span><span>{t.filteredIndex}</span></div><div className="exercise-grid">{list.map((e,i)=><Link to={`/workouts/${e.id}`} className="exercise-card" key={e.id}><div className="exercise-visual"><span className="visual-number">{String(i+1).padStart(2,'0')}</span><Dumbbell size={42}/><span className="visual-type">{e.type}</span></div><div className="exercise-info"><span className="eyebrow">{e.group} / {e.part.replaceAll('-',' ')}</span><h3>{lang==='ar'?e.nameAr:e.name}</h3><div className="meta-row"><span>{e.level}</span><span>{e.equipment}</span></div></div><ChevronRight className="card-chevron"/></Link>)}</div>{!list.length&&<div className="empty">{t.noResults}</div>}</div>}
@@ -106,7 +106,123 @@ picks.forEach(e=>usedExerciseIds.add(e.id));
 }
 function Stat({label,value}){return <div className="stat"><span>{label}</span><b>{value}</b></div>}
 function Programs({t,lang}){return <div className="container"><PageHead eyebrow="PLAN YOUR TRAINING" title={t.programs} desc={lang==='ar'?'افهم طريقة تقسيم حصص التدريب الشائعة، واضبط التكرار والحجم حسب خبرتك وقدرتك على الاستشفاء.':'Understand popular training splits and adapt frequency and volume to your experience and recovery.'}/><div className="program-grid">{programs.map((p,i)=><Link to={`/programs/${p.id}`} className="program-card"><div className="program-no">0{i+1}</div><span className="eyebrow">{p.days} DAYS · {p.level}</span><h2>{lang==='ar'?p.ar:p.name}</h2><p>{lang==='ar'?p.descAr:p.desc}</p><div className="program-foot">Explore split <ArrowUpRight size={17}/></div></Link>)}</div></div>}
-function ProgramDetail({t,lang}){const{id}=useParams(),p=programs.find(x=>x.id===id);if(!p)return <NotFound/>;const usedExerciseIds=new Set();return <div className="container"><PageHead eyebrow={`${p.days} TRAINING DAYS · ${p.level}`} title={lang==='ar'?p.ar:p.name} desc={lang==='ar'?p.descAr:p.desc}/><div className="schedule-list">{p.schedule.map((d,i)=>{const day=d[0];const lower=day.toLowerCase();const keys=lower.includes('push')||lower.includes('chest')?['Chest','Shoulders','Arms']:lower.includes('pull')||lower.includes('back')?['Back','Arms']:lower.includes('leg')||lower.includes('lower')?['Legs']:lower.includes('shoulder')||lower.includes('arm')?['Shoulders','Arms']:lower.includes('upper')?['Chest','Back','Shoulders','Arms']:lower.includes('full')||lower.includes('day')?['Chest','Back','Legs','Core']:[];const picks=keys.length?exercises.filter(e=>keys.includes(e.group)&&!usedExerciseIds.has(e.id)).slice(0,6):[];picks.forEach(e=>usedExerciseIds.add(e.id));return <div className="schedule-row" key={`${p.id}-${i}`}><span className="schedule-day">{String(i+1).padStart(2,'0')}</span><div><h3>{lang==='ar'?({'Push':'دفع','Pull':'سحب','Legs':'أرجل','Chest':'صدر','Back':'ظهر','Shoulders':'أكتاف','Arms':'ذراعان','Upper A':'علوي A','Upper B':'علوي B','Lower A':'سفلي A','Lower B':'سفلي B','Rest':'راحة'}[day]||day):day}</h3><p>{d[1]}</p>{picks.length>0&&<div className="program-exercises"><b>{t.suggested}</b>{picks.map(e=><Link key={e.id} to={`/workouts/${e.id}`}>{lang==='ar'?e.nameAr:e.name}</Link>)}</div>}</div><span className="schedule-rest">{/rest/i.test(day)?t.recovery:t.session}</span></div>})}</div><div className="notice"><Info size={18}/> Sets, reps and exercise selection should be individualized. Start with manageable volume, progress gradually and schedule rest when needed.</div><Link className="btn primary" to="/workouts">Browse exercise library <ArrowUpRight size={16}/></Link></div>}
+function ProgramDetail({t,lang}) {
+  const {id}=useParams();
+  const p=programs.find(x=>x.id===id);
+  if(!p) return <NotFound/>;
+
+  const usedExerciseIds=new Set();
+
+  return (
+    <div className="container">
+      <PageHead
+        eyebrow={`${p.days} TRAINING DAYS · ${p.level}`}
+        title={lang==='ar'?p.ar:p.name}
+        desc={lang==='ar'?p.descAr:p.desc}
+      />
+
+      <div className="schedule-list">
+        {p.schedule.map((d,i)=>{
+          const day=d[0]||'';
+          const desc=d[1]||'';
+          const lower=(day+' '+desc).toLowerCase();
+          const isRest=/rest|recovery/.test(lower);
+          const keys=new Set();
+
+          if(!isRest) {
+            if(/push|press|chest|triceps/.test(lower))
+              ['Chest','Shoulders','Arms'].forEach(x=>keys.add(x));
+
+            if(/pull|row|back|biceps/.test(lower))
+              ['Back','Arms'].forEach(x=>keys.add(x));
+
+            if(/leg|lower|squat|hinge|single-leg|glute|hamstring|quad/.test(lower))
+              keys.add('Legs');
+
+            if(/shoulder|delt|vertical press/.test(lower))
+              keys.add('Shoulders');
+
+            if(/core|abs/.test(lower))
+              keys.add('Core');
+
+            if(/upper/.test(lower))
+              ['Chest','Back','Shoulders','Arms'].forEach(x=>keys.add(x));
+
+            if(/full body|full-body/.test(lower))
+              ['Chest','Back','Legs','Core','Shoulders','Arms'].forEach(x=>keys.add(x));
+
+            if(keys.size===0 && /day\s*[a-z0-9]/i.test(lower))
+              ['Chest','Back','Legs','Core'].forEach(x=>keys.add(x));
+          }
+
+          let available=exercises.filter(e=>
+            keys.has(e.group)&&!usedExerciseIds.has(e.id)
+          );
+
+          if(available.length===0 && !isRest) {
+            available=exercises.filter(e=>keys.has(e.group));
+          }
+
+          const picks=available.slice(0,4);
+          picks.forEach(e=>usedExerciseIds.add(e.id));
+
+          return (
+            <div className="schedule-row" key={`${p.id}-${i}`}>
+              <span className="schedule-day">
+                {String(i+1).padStart(2,'0')}
+              </span>
+
+              <div>
+                <h3>
+                  {lang==='ar'?({
+                    'Push':'دفع',
+                    'Pull':'سحب',
+                    'Legs':'أرجل',
+                    'Chest':'صدر',
+                    'Back':'ظهر',
+                    'Shoulders':'أكتاف',
+                    'Arms':'ذراعان',
+                    'Upper A':'علوي A',
+                    'Upper B':'علوي B',
+                    'Lower A':'سفلي A',
+                    'Lower B':'سفلي B',
+                    'Rest':'راحة'
+                  }[day]||day):day}
+                </h3>
+
+                <p>{desc}</p>
+
+                {picks.length>0 && (
+                  <div className="program-exercises">
+                    <b>{t.suggested}</b>
+                    {picks.map(e=>(
+                      <Link key={e.id} to={`/workouts/${e.id}`}>
+                        {lang==='ar'?e.nameAr:e.name}
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              <span className="schedule-rest">
+                {/rest/i.test(day)?t.recovery:t.session}
+              </span>
+            </div>
+          );
+        })}
+      </div>
+
+      <div className="notice">
+        <Info size={18}/> Sets, reps and exercise selection should be individualized.
+        Start with manageable volume, progress gradually and schedule rest when needed.
+      </div>
+
+      <Link className="btn primary" to="/workouts">
+        Browse exercise library <ArrowUpRight size={16}/>
+      </Link>
+    </div>
+  );
+}
 function Nutrition({t,lang}){return <div className="container"><PageHead eyebrow="UNDERSTAND WHAT FUELS YOU" title={t.nutrition} desc={lang==='ar'?'مقدمة عملية عن الأنظمة والعناصر الغذائية التي تدعم الصحة والتدريب والاستشفاء.':'A practical introduction to the systems and nutrients that support health, training and recovery.'}/><div className="topic-grid">{nutritionTopics.map((n,i)=><article className="topic-card"><span className="topic-no">0{i+1}</span><span className="eyebrow">NUTRITION SCIENCE</span><h2>{lang==='ar'?n.ar:n.en}</h2><p>{lang==='ar'?n.summaryAr:n.summary}</p><ul>{(lang==='ar'?n.pointsAr:n.points).map(p=><li>{p}</li>)}</ul><div className="source-note">References: {n.sources}</div></article>)}</div><div className="notice"><HeartPulse size={18}/> {t.disclaimer} Individual micronutrient requirements depend on age, sex, life stage and health status. Consult a qualified professional for personalized advice.</div></div>}
 function FoodDatabase({t,lang}){const[q,setQ]=useState(''),[cat,setCat]=useState('All');const cats=['All',...new Set(foods.map(f=>f.category))];const data=foods.filter(f=>(cat==='All'||f.category===cat)&&(f.name+' '+f.ar).toLowerCase().includes(q.toLowerCase()));return <div className="container"><PageHead eyebrow="FOOD REFERENCE" title={t.foods} desc={lang==='ar'?'قيم غذائية مرجعية للحصة المذكورة؛ وقد تختلف حسب النوع وطريقة الطهي والوصفة.':'Reference values per stated portion. Actual values vary with brand, cut, cooking method and recipe.'}/><div className="filter-panel"><div className="searchbox"><Search size={17}/><input value={q} onChange={e=>setQ(e.target.value)} placeholder="Search foods..."/></div><select value={cat} onChange={e=>setCat(e.target.value)}>{cats.map(c=><option>{c}</option>)}</select></div><div className="table-wrap"><table><thead><tr><th>Food</th><th>Portion</th><th>kcal</th><th>Protein</th><th>Carbs</th><th>Fat</th><th>State / source</th></tr></thead><tbody>{data.map(f=><tr><td><b>{lang==='ar'?f.ar:f.name}</b><small>{lang==='ar'?f.name:f.ar}</small></td><td>{f.portion}</td><td>{f.kcal}</td><td>{f.p}g</td><td>{f.c}g</td><td>{f.f}g</td><td><small>{f.state}<br/>{f.source}</small></td></tr>)}</tbody></table></div><p className="footnote">Values are approximate reference entries, not laboratory analysis of a specific Egyptian brand or recipe. Items explicitly marked approximate should not be treated as exact.</p></div>}
 function Meals({t,lang}){const[filter,setFilter]=useState('All');const types=['All',...new Set(meals.map(m=>m.type))];const data=meals.filter(m=>filter==='All'||m.type===filter);return <div className="container"><PageHead eyebrow="SIMPLE FOOD, SMART CHOICES" title={t.meals} desc={lang==='ar'?'أفكار وجبات عملية بمكونات متاحة. القيم الغذائية تقديرية ومحسوبة من قاعدة الأطعمة.':'Practical meal inspiration using accessible ingredients. Nutrition totals are estimates.'}/><div className="chip-row">{types.map(x=><button onClick={()=>setFilter(x)} className={filter===x?'chip active':'chip'}>{x}</button>)}</div><div className="meal-grid">{data.map(m=>{const total=m.ingredients.reduce((a,[name,g])=>{const f=foods.find(x=>x.name===name);if(!f)return a;const k=g/100;return{kcal:a.kcal+f.kcal*k,p:a.p+f.p*k,c:a.c+f.c*k,f:a.f+f.f*k}}, {kcal:0,p:0,c:0,f:0});return <article className="meal-card"><div className="meal-head"><span className="eyebrow">{m.type}</span><Utensils size={22}/></div><h3>{lang==='ar'?m.ar:m.name}</h3><p>{lang==='ar'?m.methodAr:m.method}</p><div className="ingredient-list">{m.ingredients.map(([n,g])=><span>{lang==='ar'?(foods.find(f=>f.name===n)?.ar||n):n} · {g}g</span>)}</div><div className="macro-row"><span><b>{Math.round(total.kcal)}</b><small>kcal</small></span><span><b>{total.p.toFixed(1)}g</b><small>protein</small></span><span><b>{total.c.toFixed(1)}g</b><small>carbs</small></span><span><b>{total.f.toFixed(1)}g</b><small>fat</small></span></div></article>})}</div></div>}
