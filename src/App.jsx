@@ -5,7 +5,103 @@ function PageHead({eyebrow,title,desc}){return <div className="page-head"><span 
 function Home({t,lang}){return <><section className="hero"><div className="hero-copy"><span className="eyebrow"><span className="pulse"/> {t.heroTag}</span><h1>{t.heroTitle.split('\\n').map((s,i)=><React.Fragment key={i}>{i>0&&<br/>}{s}</React.Fragment>)}</h1><p>{t.heroText}</p><div className="hero-actions"><Link className="btn primary" to="/workouts">{t.exploreWorkouts}<ArrowUpRight size={17}/></Link><Link className="btn secondary" to="/nutrition">{t.exploreNutrition}</Link></div><div className="hero-proof"><span><b>35+</b> movements</span><i/><span><b>8</b> training splits</span><i/><span><b>02</b> languages</span></div></div><div className="hero-art"><div className="art-glow"/><div className="art-frame"><div className="art-grid"/><div className="art-label"><Activity size={15}/> TRAIN WITH INTENTION</div><div className="art-figure"><Dumbbell size={110} strokeWidth={1.1}/></div><div className="art-stat"><span>01 / MINDSET</span><b>DISCIPLINE<br/>OVER NOISE.</b></div></div><div className="floating-tag"><Target size={16}/> Evidence-led</div></div></section><section className="mission-strip"><div className="mission-icon"><Brain/></div><div><span className="eyebrow">OUR PURPOSE</span><h2>{t.mission}</h2><p>{t.missionText}</p></div><span className="mission-line"/></section><section className="section"><div className="section-top"><div><span className="eyebrow">ONE PLATFORM · MANY PATHS</span><h2>{t.featured}</h2></div><span className="muted">01 — 04</span></div><div className="feature-grid"><Feature to="/workouts" icon={<Dumbbell/>} no="01" title={t.library} desc={t.libraryText}/><Feature to="/nutrition" icon={<BookOpen/>} no="02" title={t.nutrition} desc={t.nutritionText}/><Feature to="/programs" icon={<Activity/>} no="03" title={t.programs} desc={t.programsText}/><Feature to="/foods" icon={<Apple/>} no="04" title={t.foods} desc={t.foodText}/></div></section><section className="quote-section"><span className="eyebrow">THE IRON MIND PROMISE</span><h2>“Strong bodies are built with<br/><em>informed decisions.</em>”</h2><p>{t.latestText}</p><Link to="/about" className="text-link">{t.about} <ArrowUpRight size={16}/></Link></section></>}
 function Feature({to,icon,no,title,desc}){return <Link to={to} className="feature-card"><div className="feature-top"><span className="feature-icon">{icon}</span><span>{no}</span></div><h3>{title}</h3><p>{desc}</p><span className="feature-arrow"><ArrowUpRight size={18}/></span></Link>}
 function Workouts({t,lang}){const[q,setQ]=useState(''),[group,setGroup]=useState('all'),[part,setPart]=useState('all'),[level,setLevel]=useState('all'),[equip,setEquip]=useState('all');const selected=groups.find(g=>g.id===group);const list=useMemo(()=>exercises.filter(e=>(group==='all'||e.group.toLowerCase()===selected?.en.toLowerCase()||e.group==='Additional'&&group==='additional')&&(part==='all'||e.part===part)&&(level==='all'||e.level===level)&&(equip==='all'||e.equipment.toLowerCase().includes(equip))&&(e.name+' '+e.nameAr+' '+e.part+' '+e.equipment).toLowerCase().includes(q.toLowerCase())),[q,group,part,level,equip]);return <div className="container"><PageHead eyebrow="MOVE WITH PURPOSE" title={t.library} desc={lang==='ar'?'مرجع متجدد للتمارين، منظم حسب المجموعة العضلية والمعدات المستخدمة.':'A growing reference of exercises, organized by muscle group and training equipment.'}/><div className="filter-panel"><div className="searchbox"><Search size={17}/><input value={q} onChange={e=>setQ(e.target.value)} placeholder={`${t.search} exercises...`}/></div><select value={group} onChange={e=>{setGroup(e.target.value);setPart('all')}}><option value="all">{t.allMuscles}</option>{groups.map(g=><option value={g.id} key={g.id}>{lang==='ar'?g.ar:g.en}</option>)}</select><select value={part} onChange={e=>setPart(e.target.value)}><option value="all">{t.allAreas}</option>{(selected?.parts||groups.flatMap(g=>g.parts)).map(p=><option key={p[0]} value={p[0]}>{lang==='ar'?p[2]:p[1]}</option>)}</select><select value={level} onChange={e=>setLevel(e.target.value)}><option value="all">{t.allLevels}</option>{['Beginner','Intermediate','Advanced'].map(x=><option>{x}</option>)}</select></div><div className="result-line"><span>{list.length} {t.movements}</span><span>{t.filteredIndex}</span></div><div className="exercise-grid">{list.map((e,i)=><Link to={`/workouts/${e.id}`} className="exercise-card" key={e.id}><div className="exercise-visual"><span className="visual-number">{String(i+1).padStart(2,'0')}</span><Dumbbell size={42}/><span className="visual-type">{e.type}</span></div><div className="exercise-info"><span className="eyebrow">{e.group} / {e.part.replaceAll('-',' ')}</span><h3>{lang==='ar'?e.nameAr:e.name}</h3><div className="meta-row"><span>{e.level}</span><span>{e.equipment}</span></div></div><ChevronRight className="card-chevron"/></Link>)}</div>{!list.length&&<div className="empty">{t.noResults}</div>}</div>}
-function ExerciseDetail({t,lang}){const{id}=useParams(),e=exercises.find(x=>x.id===id),nav=useNavigate();if(!e)return <NotFound/>;return <div className="container detail-page"><button className="back-btn" onClick={()=>nav(-1)}><ArrowLeft size={16}/>{t.back}</button><div className="detail-hero"><div><span className="eyebrow">{e.group} / {e.part}</span><h1>{lang==='ar'?e.nameAr:e.name}</h1><p>{e.type} · {e.level}</p></div><div className="detail-symbol"><Dumbbell size={76}/></div></div><div className="detail-stats"><Stat label={t.primary} value={e.part}/><Stat label={t.secondary} value={e.secondary}/><Stat label={t.equipment} value={e.equipment}/><Stat label={t.sets} value={e.sets}/></div><div className="content-grid"><article className="content-panel"><h2>{t.how}</h2><ol>{e.steps.map(s=><li>{s}</li>)}</ol><h2>{t.mistakes}</h2><p>{e.mistakes}</p><h2>{t.tips}</h2><p>{e.tips}</p></article><aside className="content-panel accent-panel"><span className="eyebrow">TRAINING NOTE</span><h3>Quality before load.</h3><p>Use a resistance you can control through a comfortable range of motion. Stop if you experience sharp or unusual pain.</p><div className="tag-row"><span>{e.type}</span><span>{e.level}</span></div></aside></div></div>}
+function ProgramDetail({t,lang}) {
+  const {id}=useParams();
+  const p=programs.find(x=>x.id===id);
+  if(!p) return <NotFound/>;
+
+  const usedExerciseIds=new Set();
+
+  return <div className="container">
+    <PageHead
+      eyebrow={`${p.days} TRAINING DAYS · ${p.level}`}
+      title={lang==='ar'?p.ar:p.name}
+      desc={lang==='ar'?p.descAr:p.desc}
+    />
+    <div className="schedule-list">
+      {p.schedule.map((d,i)=>{
+        const day=d[0]||'';
+        const desc=d[1]||'';
+        const lower=(day+' '+desc).toLowerCase();
+        const isRest=/rest|recovery/.test(lower);
+        const keys=new Set();
+
+        if(!isRest){
+          if(/push|press|chest|triceps/.test(lower))
+            ['Chest','Shoulders','Arms'].forEach(x=>keys.add(x));
+
+          if(/pull|row|back|biceps/.test(lower))
+            ['Back','Arms'].forEach(x=>keys.add(x));
+
+          if(/leg|lower|squat|hinge|single-leg|glute|hamstring|quad/.test(lower))
+            keys.add('Legs');
+
+          if(/shoulder|delt|vertical press/.test(lower))
+            keys.add('Shoulders');
+
+          if(/core|abs/.test(lower))
+            keys.add('Core');
+
+          if(/upper/.test(lower))
+            ['Chest','Back','Shoulders','Arms'].forEach(x=>keys.add(x));
+
+          if(/full body|full-body/.test(lower))
+            ['Chest','Back','Legs','Core','Shoulders','Arms'].forEach(x=>keys.add(x));
+        }
+
+        let available=exercises.filter(e=>
+          keys.has(e.group)&&!usedExerciseIds.has(e.id)
+        );
+
+        if(available.length===0&&!isRest){
+          available=exercises.filter(e=>keys.has(e.group));
+        }
+
+        const picks=available.slice(0,4);
+        picks.forEach(e=>usedExerciseIds.add(e.id));
+
+        return <div className="schedule-row" key={`${p.id}-${i}`}>
+          <span className="schedule-day">{String(i+1).padStart(2,'0')}</span>
+          <div>
+            <h3>{lang==='ar'?({
+              'Push':'دفع',
+              'Pull':'سحب',
+              'Legs':'أرجل',
+              'Chest':'صدر',
+              'Back':'ظهر',
+              'Shoulders':'أكتاف',
+              'Arms':'ذراعان',
+              'Upper A':'علوي A',
+              'Upper B':'علوي B',
+              'Lower A':'سفلي A',
+              'Lower B':'سفلي B',
+              'Rest':'راحة'
+            }[day]||day):day}</h3>
+            <p>{desc}</p>
+            {picks.length>0&&<div className="program-exercises">
+              <b>{t.suggested}</b>
+              {picks.map(e=>
+                <Link key={e.id} to={`/workouts/${e.id}`}>
+                  {lang==='ar'?e.nameAr:e.name}
+                </Link>
+              )}
+            </div>}
+          </div>
+          <span className="schedule-rest">
+            {/rest/i.test(day)?t.recovery:t.session}
+          </span>
+        </div>;
+      })}
+    </div>
+    <div className="notice">
+      <Info size={18}/> Sets, reps and exercise selection should be individualized.
+      Start with manageable volume, progress gradually and schedule rest when needed.
+    </div>
+    <Link className="btn primary" to="/workouts">
+      Browse exercise library <ArrowUpRight size={16}/>
+    </Link>
+  </div>;
+}
 function Stat({label,value}){return <div className="stat"><span>{label}</span><b>{value}</b></div>}
 function Programs({t,lang}){return <div className="container"><PageHead eyebrow="PLAN YOUR TRAINING" title={t.programs} desc={lang==='ar'?'افهم طريقة تقسيم حصص التدريب الشائعة، واضبط التكرار والحجم حسب خبرتك وقدرتك على الاستشفاء.':'Understand popular training splits and adapt frequency and volume to your experience and recovery.'}/><div className="program-grid">{programs.map((p,i)=><Link to={`/programs/${p.id}`} className="program-card"><div className="program-no">0{i+1}</div><span className="eyebrow">{p.days} DAYS · {p.level}</span><h2>{lang==='ar'?p.ar:p.name}</h2><p>{lang==='ar'?p.descAr:p.desc}</p><div className="program-foot">Explore split <ArrowUpRight size={17}/></div></Link>)}</div></div>}
 function ProgramDetail({t,lang}){const{id}=useParams(),p=programs.find(x=>x.id===id);if(!p)return <NotFound/>;const usedExerciseIds=new Set();return <div className="container"><PageHead eyebrow={`${p.days} TRAINING DAYS · ${p.level}`} title={lang==='ar'?p.ar:p.name} desc={lang==='ar'?p.descAr:p.desc}/><div className="schedule-list">{p.schedule.map((d,i)=>{const day=d[0];const lower=day.toLowerCase();const keys=lower.includes('push')||lower.includes('chest')?['Chest','Shoulders','Arms']:lower.includes('pull')||lower.includes('back')?['Back','Arms']:lower.includes('leg')||lower.includes('lower')?['Legs']:lower.includes('shoulder')||lower.includes('arm')?['Shoulders','Arms']:lower.includes('upper')?['Chest','Back','Shoulders','Arms']:lower.includes('full')||lower.includes('day')?['Chest','Back','Legs','Core']:[];return <div className="schedule-row" key={`${p.id}-${i}`}><span className="schedule-day">{String(i+1).padStart(2,'0')}</span><div><h3>{lang==='ar'?({'Push':'دفع','Pull':'سحب','Legs':'أرجل','Chest':'صدر','Back':'ظهر','Shoulders':'أكتاف','Arms':'ذراعان','Upper A':'علوي A','Upper B':'علوي B','Lower A':'سفلي A','Lower B':'سفلي B','Rest':'راحة'}[day]||day):day}</h3><p>{d[1]}</p>{picks.length>0&&<div className="program-exercises"><b>{t.suggested}</b>{picks.map(e=><Link key={e.id} to={`/workouts/${e.id}`}>{lang==='ar'?e.nameAr:e.name}</Link>)}</div>}</div><span className="schedule-rest">{/rest/i.test(day)?t.recovery:t.session}</span></div>})}</div><div className="notice"><Info size={18}/> Sets, reps and exercise selection should be individualized. Start with manageable volume, progress gradually and schedule rest when needed.</div><Link className="btn primary" to="/workouts">Browse exercise library <ArrowUpRight size={16}/></Link></div>}
