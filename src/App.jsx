@@ -12,97 +12,115 @@ function ProgramDetail({t,lang}) {
 
   const usedExerciseIds=new Set();
 
-  return <div className="container">
-    <PageHead
-      eyebrow={`${p.days} TRAINING DAYS · ${p.level}`}
-      title={lang==='ar'?p.ar:p.name}
-      desc={lang==='ar'?p.descAr:p.desc}
-    />
-    <div className="schedule-list">
-      {p.schedule.map((d,i)=>{
-        const day=d[0]||'';
-        const desc=d[1]||'';
-        const lower=(day+' '+desc).toLowerCase();
-        const isRest=/rest|recovery/.test(lower);
-        const keys=new Set();
+  return (
+    <div className="container">
+      <PageHead
+        eyebrow={`${p.days} TRAINING DAYS · ${p.level}`}
+        title={lang==='ar'?p.ar:p.name}
+        desc={lang==='ar'?p.descAr:p.desc}
+      />
 
-        if(!isRest){
-          if(/push|press|chest|triceps/.test(lower))
-            ['Chest','Shoulders','Arms'].forEach(x=>keys.add(x));
+      <div className="schedule-list">
+        {p.schedule.map((d,i)=>{
+          const day=d[0]||'';
+          const desc=d[1]||'';
+          const lower=(day+' '+desc).toLowerCase();
+          const isRest=/rest|recovery/.test(lower);
+          const keys=new Set();
 
-          if(/pull|row|back|biceps/.test(lower))
-            ['Back','Arms'].forEach(x=>keys.add(x));
+          if(!isRest) {
+            if(/push|press|chest|triceps/.test(lower))
+              ['Chest','Shoulders','Arms'].forEach(x=>keys.add(x));
 
-          if(/leg|lower|squat|hinge|single-leg|glute|hamstring|quad/.test(lower))
-            keys.add('Legs');
+            if(/pull|row|back|biceps/.test(lower))
+              ['Back','Arms'].forEach(x=>keys.add(x));
 
-          if(/shoulder|delt|vertical press/.test(lower))
-            keys.add('Shoulders');
+            if(/leg|lower|squat|hinge|single-leg|glute|hamstring|quad/.test(lower))
+              keys.add('Legs');
 
-          if(/core|abs/.test(lower))
-            keys.add('Core');
+            if(/shoulder|delt|vertical press/.test(lower))
+              keys.add('Shoulders');
 
-          if(/upper/.test(lower))
-            ['Chest','Back','Shoulders','Arms'].forEach(x=>keys.add(x));
+            if(/core|abs/.test(lower))
+              keys.add('Core');
 
-          if(/full body|full-body/.test(lower))
-            ['Chest','Back','Legs','Core','Shoulders','Arms'].forEach(x=>keys.add(x));
-        }
+            if(/upper/.test(lower))
+              ['Chest','Back','Shoulders','Arms'].forEach(x=>keys.add(x));
 
-        let available=exercises.filter(e=>
-          keys.has(e.group)&&!usedExerciseIds.has(e.id)
-        );
+            if(/full body|full-body/.test(lower))
+              ['Chest','Back','Legs','Core','Shoulders','Arms'].forEach(x=>keys.add(x));
 
-        if(available.length===0&&!isRest){
-          available=exercises.filter(e=>keys.has(e.group));
-        }
+            if(keys.size===0 && /day\s*[a-z0-9]/i.test(lower))
+              ['Chest','Back','Legs','Core'].forEach(x=>keys.add(x));
+          }
 
-        const picks=available.slice(0,4);
-        picks.forEach(e=>usedExerciseIds.add(e.id));
+          let available=exercises.filter(e=>
+            keys.has(e.group)&&!usedExerciseIds.has(e.id)
+          );
 
-    const picks=keys.length?exercises.filter(e=>keys.includes(e.group)&&!usedExerciseIds.has(e.id)).slice(0,6):[];
-picks.forEach(e=>usedExerciseIds.add(e.id));
-        :[];const picks=keys.length?exercises.filter(e=>keys.includes(e.group)&&!usedExerciseIds.has(e.id)).slice(0,6):[];picks.forEach(e=>usedExerciseIds.add(e.id));return <div className="schedule-row" key={`${p.id}-${i}`}>
-          <span className="schedule-day">{String(i+1).padStart(2,'0')}</span>
-          <div>
-            <h3>{lang==='ar'?({
-              'Push':'دفع',
-              'Pull':'سحب',
-              'Legs':'أرجل',
-              'Chest':'صدر',
-              'Back':'ظهر',
-              'Shoulders':'أكتاف',
-              'Arms':'ذراعان',
-              'Upper A':'علوي A',
-              'Upper B':'علوي B',
-              'Lower A':'سفلي A',
-              'Lower B':'سفلي B',
-              'Rest':'راحة'
-            }[day]||day):day}</h3>
-            <p>{desc}</p>
-            {picks.length>0&&<div className="program-exercises">
-              <b>{t.suggested}</b>
-              {picks.map(e=>
-                <Link key={e.id} to={`/workouts/${e.id}`}>
-                  {lang==='ar'?e.nameAr:e.name}
-                </Link>
-              )}
-            </div>}
-          </div>
-          <span className="schedule-rest">
-            {/rest/i.test(day)?t.recovery:t.session}
-          </span>
-        </div>;
-      })}
+          if(available.length===0 && !isRest) {
+            available=exercises.filter(e=>keys.has(e.group));
+          }
+
+          const picks=available.slice(0,4);
+          picks.forEach(e=>usedExerciseIds.add(e.id));
+
+          return (
+            <div className="schedule-row" key={`${p.id}-${i}`}>
+              <span className="schedule-day">
+                {String(i+1).padStart(2,'0')}
+              </span>
+
+              <div>
+                <h3>
+                  {lang==='ar'?({
+                    'Push':'دفع',
+                    'Pull':'سحب',
+                    'Legs':'أرجل',
+                    'Chest':'صدر',
+                    'Back':'ظهر',
+                    'Shoulders':'أكتاف',
+                    'Arms':'ذراعان',
+                    'Upper A':'علوي A',
+                    'Upper B':'علوي B',
+                    'Lower A':'سفلي A',
+                    'Lower B':'سفلي B',
+                    'Rest':'راحة'
+                  }[day]||day):day}
+                </h3>
+
+                <p>{desc}</p>
+
+                {picks.length>0 && (
+                  <div className="program-exercises">
+                    <b>{t.suggested}</b>
+                    {picks.map(e=>(
+                      <Link key={e.id} to={`/workouts/${e.id}`}>
+                        {lang==='ar'?e.nameAr:e.name}
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              <span className="schedule-rest">
+                {/rest/i.test(day)?t.recovery:t.session}
+              </span>
+            </div>
+          );
+        })}
+      </div>
+
+      <div className="notice">
+        <Info size={18}/> Sets, reps and exercise selection should be individualized.
+        Start with manageable volume, progress gradually and schedule rest when needed.
+      </div>
+
+      <Link className="btn primary" to="/workouts">
+        Browse exercise library <ArrowUpRight size={16}/>
+      </Link>
     </div>
-    <div className="notice">
-      <Info size={18}/> Sets, reps and exercise selection should be individualized.
-      Start with manageable volume, progress gradually and schedule rest when needed.
-    </div>
-    <Link className="btn primary" to="/workouts">
-      Browse exercise library <ArrowUpRight size={16}/>
-    </Link>
-  </div>;
+  );
 }
 function Stat({label,value}){return <div className="stat"><span>{label}</span><b>{value}</b></div>}
 function Programs({t,lang}){return <div className="container"><PageHead eyebrow="PLAN YOUR TRAINING" title={t.programs} desc={lang==='ar'?'افهم طريقة تقسيم حصص التدريب الشائعة، واضبط التكرار والحجم حسب خبرتك وقدرتك على الاستشفاء.':'Understand popular training splits and adapt frequency and volume to your experience and recovery.'}/><div className="program-grid">{programs.map((p,i)=><Link to={`/programs/${p.id}`} className="program-card"><div className="program-no">0{i+1}</div><span className="eyebrow">{p.days} DAYS · {p.level}</span><h2>{lang==='ar'?p.ar:p.name}</h2><p>{lang==='ar'?p.descAr:p.desc}</p><div className="program-foot">Explore split <ArrowUpRight size={17}/></div></Link>)}</div></div>}
